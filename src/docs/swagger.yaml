@@ -1,4 +1,16 @@
 definitions:
+  github_com_alielmi98_golang-todo-list-api_api_dto.CreateTodoRequest:
+    properties:
+      completed:
+        type: boolean
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
   github_com_alielmi98_golang-todo-list-api_api_dto.LoginByUsernameRequest:
     properties:
       password:
@@ -25,6 +37,19 @@ definitions:
     required:
     - password
     - username
+    type: object
+  github_com_alielmi98_golang-todo-list-api_api_dto.TodoResponse:
+    properties:
+      completed:
+        type: boolean
+      description:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      userId:
+        type: integer
     type: object
   github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse:
     properties:
@@ -60,6 +85,37 @@ definitions:
 info:
   contact: {}
 paths:
+  /v1/todo/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new todo job
+      parameters:
+      - description: Create a todo
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.CreateTodoRequest'
+      responses:
+        "201":
+          description: Todo response
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.TodoResponse'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: Create a todo
+      tags:
+      - Todo
   /v1/users/login-by-username:
     post:
       consumes:

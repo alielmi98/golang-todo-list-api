@@ -15,6 +15,60 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/todo/": {
+            "post": {
+                "security": [
+                    {
+                        "AuthBearer": []
+                    }
+                ],
+                "description": "Create a new todo job",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Todo"
+                ],
+                "summary": "Create a todo",
+                "parameters": [
+                    {
+                        "description": "Create a todo",
+                        "name": "Request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.CreateTodoRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Todo response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "result": {
+                                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.TodoResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/login-by-username": {
             "post": {
                 "description": "LoginByUsername",
@@ -109,6 +163,24 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_alielmi98_golang-todo-list-api_api_dto.CreateTodoRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "title"
+            ],
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_alielmi98_golang-todo-list-api_api_dto.LoginByUsernameRequest": {
             "type": "object",
             "required": [
@@ -144,6 +216,26 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "minLength": 5
+                }
+            }
+        },
+        "github_com_alielmi98_golang-todo-list-api_api_dto.TodoResponse": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
                 }
             }
         },
