@@ -3,9 +3,11 @@ package cache
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/alielmi98/golang-todo-list-api/config"
+	"github.com/alielmi98/golang-todo-list-api/constants"
 	"github.com/go-redis/redis/v7"
 )
 
@@ -29,6 +31,9 @@ func InitRedis(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
+
+	log.Printf("caller:%s  Level:%s Msg:Redis connection established", constants.Redis, constants.Startup)
+
 	return nil
 }
 

@@ -7,6 +7,7 @@ import (
 	"github.com/alielmi98/golang-todo-list-api/constants"
 	"github.com/alielmi98/golang-todo-list-api/data/cache"
 	"github.com/alielmi98/golang-todo-list-api/data/db"
+	"github.com/alielmi98/golang-todo-list-api/data/db/migrations"
 )
 
 func main() {
@@ -22,4 +23,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("caller:%s  Level:%s  Msg:%s", constants.Postgres, constants.Startup, err.Error())
 	}
+	migrations.Up_1()
 }
