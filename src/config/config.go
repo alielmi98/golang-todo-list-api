@@ -14,6 +14,7 @@ type Config struct {
 	Postgres PostgresConfig
 	Redis    RedisConfig
 	Password PasswordConfig
+	Cors     CorsConfig
 	JWT      JWTConfig
 }
 
@@ -47,7 +48,6 @@ type RedisConfig struct {
 	PoolSize           int
 	PoolTimeout        time.Duration
 }
-
 type PasswordConfig struct {
 	IncludeChars     bool
 	IncludeDigits    bool
@@ -55,6 +55,9 @@ type PasswordConfig struct {
 	MaxLength        int
 	IncludeUppercase bool
 	IncludeLowercase bool
+}
+type CorsConfig struct {
+	AllowOrigins string
 }
 
 type JWTConfig struct {

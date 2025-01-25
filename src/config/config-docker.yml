@@ -2,6 +2,8 @@ server:
   internalPort: 5000
   externalPort: 0
   runMode: release
+cors:
+  allowOrigins: "*"
 postgres:
   host: postgres_container
   port: 5432
