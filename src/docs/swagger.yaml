@@ -1,5 +1,5 @@
 definitions:
-  github_com_alielmi98_golang-todo-list-api_api_dto.CreateTodoRequest:
+  github_com_alielmi98_golang-todo-list-api_api_dto.CreateToDoRequest:
     properties:
       completed:
         type: boolean
@@ -38,7 +38,7 @@ definitions:
     - password
     - username
     type: object
-  github_com_alielmi98_golang-todo-list-api_api_dto.TodoResponse:
+  github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse:
     properties:
       completed:
         type: boolean
@@ -50,6 +50,18 @@ definitions:
         type: string
       userId:
         type: integer
+    type: object
+  github_com_alielmi98_golang-todo-list-api_api_dto.UpdateToDoRequest:
+    properties:
+      completed:
+        type: boolean
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
     type: object
   github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse:
     properties:
@@ -96,16 +108,16 @@ paths:
         name: Request
         required: true
         schema:
-          $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.CreateTodoRequest'
+          $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.CreateToDoRequest'
       responses:
         "201":
-          description: Todo response
+          description: ToDo response
           schema:
             allOf:
             - $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
             - properties:
                 result:
-                  $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.TodoResponse'
+                  $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse'
               type: object
         "400":
           description: Bad request
@@ -114,6 +126,100 @@ paths:
       security:
       - AuthBearer: []
       summary: Create a todo
+      tags:
+      - Todo
+  /v1/todo/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a todo job by Id
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Todo response
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  type: string
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: Delete a todo
+      tags:
+      - Todo
+    get:
+      consumes:
+      - application/json
+      description: Get a todo job by Id
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "201":
+          description: Todo response
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: Get a todo
+      tags:
+      - Todo
+    put:
+      consumes:
+      - application/json
+      description: Update a todo job
+      parameters:
+      - description: Id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update a todo
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.UpdateToDoRequest'
+      responses:
+        "201":
+          description: Todo response
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: Update a todo
       tags:
       - Todo
   /v1/users/login-by-username:

@@ -1,12 +1,18 @@
 package dto
 
-type CreateTodoRequest struct {
+type CreateToDoRequest struct {
 	Title       string `json:"title" binding:"required"`
 	Description string `json:"description" binding:"required"`
 	Completed   bool   `json:"completed"`
 }
 
-type TodoResponse struct {
+type UpdateToDoRequest struct {
+	Title       string `json:"title" binding:"required"`
+	Description string `json:"description" binding:"required"`
+	Completed   bool   `json:"completed"`
+}
+
+type ToDoResponse struct {
 	Id          int    `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
