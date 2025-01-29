@@ -20,6 +20,19 @@ type ToDoResponse struct {
 	UserId      int    `json:"userId"`
 }
 
-type AllToDoResponse struct {
-	ToDos []ToDoResponse `json:"todos"`
+type PaginationInputWithFilter struct {
+	PageNumber int                    `json:"pageNumber"`
+	PageSize   int                    `json:"pageSize"`
+	Filter     map[string]interface{} `json:"filter"`
+	Sort       map[string]string      `json:"sort"`
+}
+
+type PagedList[T any] struct {
+	PageNumber  int   `json:"pageNumber"`
+	PageSize    int   `json:"pageSize"`
+	TotalRows   int64 `json:"totalRows"`
+	TotalPages  int   `json:"totalPages"`
+	HasNextPage bool  `json:"hasNextPage"`
+	HasPrevPage bool  `json:"hasPrevPage"`
+	Items       []T   `json:"items"`
 }

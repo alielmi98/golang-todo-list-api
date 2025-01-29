@@ -122,22 +122,31 @@ func (h *ToDoHandler) GetToDoById(c *gin.Context) {
 	c.JSON(http.StatusCreated, helper.GenerateBaseResponse(response, true, 0))
 }
 
-// GetAllToDos godoc
-// @Summary Get All  todo
-// @Description Get All todo job
-// @Tags Todo
-// @Accept json
-// @produces json
-// @Success 201 {object} helper.BaseHttpResponse{result=dto.AllToDoResponse} "Todo response"
-// @Failure 400 {object} helper.BaseHttpResponse "Bad request"
-// @Router /v1/todo/  [get]
+// GetToDosByFilter godoc
+// @Summary      Get ToDos by filter with pagination
+// @Description  Retrieve a list of ToDos based on filter criteria with pagination support
+// @Tags         Todo
+// @Accept       json
+// @Produce      json
+// @Param        paginationInput body dto.PaginationInputWithFilter true "Pagination and filter input"
+// @Success      200 {object} helper.BaseHttpResponse{result=dto.PagedList[dto.ToDoResponse]} "Successful response with list of ToDos"
+// @Failure      400 {object} helper.BaseHttpResponse "Invalid input"
+// @Failure      404 {object} helper.BaseHttpResponse "No ToDos found"
+// @Failure      500 {object} helper.BaseHttpResponse "Internal server error"
+// @Router       /v1/todo/filter [post]
 // @Security AuthBearer
-func (h *ToDoHandler) GetAllToDos(c *gin.Context) {
-	todos, err := h.todoService.GetAllToDos(c)
+func (h *ToDoHandler) GetToDosByFilter(c *gin.Context) {
+	var paginationInput dto.PaginationInputWithFilter
+	if err := c.ShouldBindJSON(&paginationInput); err != nil {
+		c.JSON(http.StatusBadRequest, helper.GenerateBaseResponseWithError(nil, false, helper.InvalidInputError, err))
+		return
+	}
+
+	response, err := h.todoService.GetToDosByFilter(c, &paginationInput)
 	if err != nil {
 		c.JSON(helper.TranslateErrorToStatusCode(err), helper.GenerateBaseResponseWithError(nil, false, helper.NotFoundError, err))
 		return
 	}
 
-	c.JSON(http.StatusOK, helper.GenerateBaseResponse(todos, true, 0))
+	c.JSON(http.StatusOK, helper.GenerateBaseResponse(response, true, 0))
 }

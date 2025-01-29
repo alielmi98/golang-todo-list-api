@@ -1,11 +1,4 @@
 definitions:
-  github_com_alielmi98_golang-todo-list-api_api_dto.AllToDoResponse:
-    properties:
-      todos:
-        items:
-          $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse'
-        type: array
-    type: object
   github_com_alielmi98_golang-todo-list-api_api_dto.CreateToDoRequest:
     properties:
       completed:
@@ -29,6 +22,39 @@ definitions:
     required:
     - password
     - username
+    type: object
+  github_com_alielmi98_golang-todo-list-api_api_dto.PagedList-github_com_alielmi98_golang-todo-list-api_api_dto_ToDoResponse:
+    properties:
+      hasNextPage:
+        type: boolean
+      hasPrevPage:
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse'
+        type: array
+      pageNumber:
+        type: integer
+      pageSize:
+        type: integer
+      totalPages:
+        type: integer
+      totalRows:
+        type: integer
+    type: object
+  github_com_alielmi98_golang-todo-list-api_api_dto.PaginationInputWithFilter:
+    properties:
+      filter:
+        additionalProperties: true
+        type: object
+      pageNumber:
+        type: integer
+      pageSize:
+        type: integer
+      sort:
+        additionalProperties:
+          type: string
+        type: object
     type: object
   github_com_alielmi98_golang-todo-list-api_api_dto.RegisterUserByUsernameRequest:
     properties:
@@ -90,6 +116,7 @@ definitions:
     - 42902
     - 50001
     - 50002
+    - 50003
     type: integer
     x-enum-varnames:
     - Success
@@ -101,33 +128,11 @@ definitions:
     - OtpLimiterError
     - CustomRecovery
     - InternalError
+    - InvalidInputError
 info:
   contact: {}
 paths:
   /v1/todo/:
-    get:
-      consumes:
-      - application/json
-      description: Get All todo job
-      responses:
-        "201":
-          description: Todo response
-          schema:
-            allOf:
-            - $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
-            - properties:
-                result:
-                  $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.AllToDoResponse'
-              type: object
-        "400":
-          description: Bad request
-          schema:
-            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
-      security:
-      - AuthBearer: []
-      summary: Get All  todo
-      tags:
-      - Todo
     post:
       consumes:
       - application/json
@@ -250,6 +255,48 @@ paths:
       security:
       - AuthBearer: []
       summary: Update a todo
+      tags:
+      - Todo
+  /v1/todo/filter:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve a list of ToDos based on filter criteria with pagination
+        support
+      parameters:
+      - description: Pagination and filter input
+        in: body
+        name: paginationInput
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.PaginationInputWithFilter'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with list of ToDos
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.PagedList-github_com_alielmi98_golang-todo-list-api_api_dto_ToDoResponse'
+              type: object
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+        "404":
+          description: No ToDos found
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: Get ToDos by filter with pagination
       tags:
       - Todo
   /v1/users/login-by-username:

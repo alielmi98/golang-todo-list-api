@@ -16,7 +16,7 @@ type ToDoService interface {
 	UpdateToDo(ctx context.Context, id int, todo *dto.UpdateToDoRequest) (*dto.ToDoResponse, error)
 	DeleteToDo(ctx context.Context, id int) error
 	GetToDoById(ctx context.Context, id int) (*dto.ToDoResponse, error)
-	GetAllToDos(ctx context.Context) (*dto.AllToDoResponse, error)
+	GetToDosByFilter(ctx context.Context, pagination *dto.PaginationInputWithFilter) (*dto.PagedList[dto.ToDoResponse], error)
 }
 
 type toDoService struct {
@@ -92,22 +92,8 @@ func (s *toDoService) DeleteToDo(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *toDoService) GetAllToDos(ctx context.Context) (*dto.AllToDoResponse, error) {
+func (s *toDoService) GetToDosByFilter(ctx context.Context, pagination *dto.PaginationInputWithFilter) (*dto.PagedList[dto.ToDoResponse], error) {
 	userId := int(ctx.Value(constants.UserIdKey).(float64))
-	todos, err := s.todoRepository.GetAllToDos(ctx, userId)
-	if err != nil {
-		return nil, err
-	}
-	var todoResponses []dto.ToDoResponse
-	for _, todo := range todos {
-		todoResponses = append(todoResponses, dto.ToDoResponse{
-			Id:          todo.Id,
-			Title:       todo.Title,
-			Description: todo.Description,
-			Completed:   todo.Completed,
-			UserId:      todo.UserId,
-		})
-	}
-	response := &dto.AllToDoResponse{ToDos: todoResponses}
-	return response, nil
+
+	return s.todoRepository.GetToDosByFilter(ctx, pagination, userId)
 }

@@ -16,47 +16,6 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/v1/todo/": {
-            "get": {
-                "security": [
-                    {
-                        "AuthBearer": []
-                    }
-                ],
-                "description": "Get All todo job",
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Todo"
-                ],
-                "summary": "Get All  todo",
-                "responses": {
-                    "201": {
-                        "description": "Todo response",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "result": {
-                                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.AllToDoResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -103,6 +62,75 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/todo/filter": {
+            "post": {
+                "security": [
+                    {
+                        "AuthBearer": []
+                    }
+                ],
+                "description": "Retrieve a list of ToDos based on filter criteria with pagination support",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Todo"
+                ],
+                "summary": "Get ToDos by filter with pagination",
+                "parameters": [
+                    {
+                        "description": "Pagination and filter input",
+                        "name": "paginationInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.PaginationInputWithFilter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with list of ToDos",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "result": {
+                                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.PagedList-github_com_alielmi98_golang-todo-list-api_api_dto_ToDoResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "No ToDos found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
                         }
@@ -365,17 +393,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_alielmi98_golang-todo-list-api_api_dto.AllToDoResponse": {
-            "type": "object",
-            "properties": {
-                "todos": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse"
-                    }
-                }
-            }
-        },
         "github_com_alielmi98_golang-todo-list-api_api_dto.CreateToDoRequest": {
             "type": "object",
             "required": [
@@ -408,6 +425,56 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "minLength": 5
+                }
+            }
+        },
+        "github_com_alielmi98_golang-todo-list-api_api_dto.PagedList-github_com_alielmi98_golang-todo-list-api_api_dto_ToDoResponse": {
+            "type": "object",
+            "properties": {
+                "hasNextPage": {
+                    "type": "boolean"
+                },
+                "hasPrevPage": {
+                    "type": "boolean"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse"
+                    }
+                },
+                "pageNumber": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "totalPages": {
+                    "type": "integer"
+                },
+                "totalRows": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_alielmi98_golang-todo-list-api_api_dto.PaginationInputWithFilter": {
+            "type": "object",
+            "properties": {
+                "filter": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "pageNumber": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -494,7 +561,8 @@ const docTemplate = `{
                 42901,
                 42902,
                 50001,
-                50002
+                50002,
+                50003
             ],
             "x-enum-varnames": [
                 "Success",
@@ -505,7 +573,8 @@ const docTemplate = `{
                 "LimiterError",
                 "OtpLimiterError",
                 "CustomRecovery",
-                "InternalError"
+                "InternalError",
+                "InvalidInputError"
             ]
         }
     },
