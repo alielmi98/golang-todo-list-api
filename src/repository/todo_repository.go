@@ -16,6 +16,7 @@ type ToDoRepository interface {
 	UpdateToDo(ctx context.Context, id int, model *models.Todo) error
 	DeleteToDo(ctx context.Context, id int) error
 	GetToDoById(ctx context.Context, id int) (*models.Todo, error)
+	GetAllToDos(ctx context.Context, userid int) ([]models.Todo, error)
 }
 
 type toDoRepository struct {
@@ -81,4 +82,13 @@ func (r *toDoRepository) GetToDoById(ctx context.Context, id int) (*models.Todo,
 		return nil, err
 	}
 	return model, nil
+}
+
+func (r *toDoRepository) GetAllToDos(ctx context.Context, userid int) ([]models.Todo, error) {
+
+	var todos []models.Todo
+	if err := r.database.Where("user_id = ?", userid).Find(&todos).Error; err != nil {
+		return nil, err
+	}
+	return todos, nil
 }

@@ -16,6 +16,47 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/v1/todo/": {
+            "get": {
+                "security": [
+                    {
+                        "AuthBearer": []
+                    }
+                ],
+                "description": "Get All todo job",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Todo"
+                ],
+                "summary": "Get All  todo",
+                "responses": {
+                    "201": {
+                        "description": "Todo response",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "result": {
+                                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.AllToDoResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -324,6 +365,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "github_com_alielmi98_golang-todo-list-api_api_dto.AllToDoResponse": {
+            "type": "object",
+            "properties": {
+                "todos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse"
+                    }
+                }
+            }
+        },
         "github_com_alielmi98_golang-todo-list-api_api_dto.CreateToDoRequest": {
             "type": "object",
             "required": [

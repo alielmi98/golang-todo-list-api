@@ -10,6 +10,7 @@ import (
 func Todo(router *gin.RouterGroup, cfg *config.Config) {
 	h := handlers.NewToDoHandler()
 	router.POST("/", h.CreateToDo)
+	router.GET("/", h.GetAllToDos)
 	router.PUT("/:id", middlewares.AuthorizeTodoAccess(), h.UpdateToDo)
 	router.GET("/:id", middlewares.AuthorizeTodoAccess(), h.GetToDoById)
 	router.DELETE("/:id", middlewares.AuthorizeTodoAccess(), h.DeleteTodo)

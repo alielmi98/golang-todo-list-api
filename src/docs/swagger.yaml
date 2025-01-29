@@ -1,4 +1,11 @@
 definitions:
+  github_com_alielmi98_golang-todo-list-api_api_dto.AllToDoResponse:
+    properties:
+      todos:
+        items:
+          $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.ToDoResponse'
+        type: array
+    type: object
   github_com_alielmi98_golang-todo-list-api_api_dto.CreateToDoRequest:
     properties:
       completed:
@@ -98,6 +105,29 @@ info:
   contact: {}
 paths:
   /v1/todo/:
+    get:
+      consumes:
+      - application/json
+      description: Get All todo job
+      responses:
+        "201":
+          description: Todo response
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+            - properties:
+                result:
+                  $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_dto.AllToDoResponse'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+      security:
+      - AuthBearer: []
+      summary: Get All  todo
+      tags:
+      - Todo
     post:
       consumes:
       - application/json

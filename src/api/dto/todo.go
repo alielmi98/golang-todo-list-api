@@ -19,3 +19,7 @@ type ToDoResponse struct {
 	Completed   bool   `json:"completed"`
 	UserId      int    `json:"userId"`
 }
+
+type AllToDoResponse struct {
+	ToDos []ToDoResponse `json:"todos"`
+}

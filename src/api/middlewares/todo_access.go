@@ -26,7 +26,7 @@ func AuthorizeTodoAccess() gin.HandlerFunc {
 
 		if todo.UserId != userId {
 			err := errors.New("access denied")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, helper.GenerateBaseResponseWithError(
+			c.AbortWithStatusJSON(http.StatusForbidden, helper.GenerateBaseResponseWithError(
 				nil, false, helper.AuthError, err,
 			))
 			return

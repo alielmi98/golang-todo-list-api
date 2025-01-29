@@ -121,3 +121,23 @@ func (h *ToDoHandler) GetToDoById(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, helper.GenerateBaseResponse(response, true, 0))
 }
+
+// GetAllToDos godoc
+// @Summary Get All  todo
+// @Description Get All todo job
+// @Tags Todo
+// @Accept json
+// @produces json
+// @Success 201 {object} helper.BaseHttpResponse{result=dto.AllToDoResponse} "Todo response"
+// @Failure 400 {object} helper.BaseHttpResponse "Bad request"
+// @Router /v1/todo/  [get]
+// @Security AuthBearer
+func (h *ToDoHandler) GetAllToDos(c *gin.Context) {
+	todos, err := h.todoService.GetAllToDos(c)
+	if err != nil {
+		c.JSON(helper.TranslateErrorToStatusCode(err), helper.GenerateBaseResponseWithError(nil, false, helper.NotFoundError, err))
+		return
+	}
+
+	c.JSON(http.StatusOK, helper.GenerateBaseResponse(todos, true, 0))
+}
