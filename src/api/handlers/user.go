@@ -6,6 +6,7 @@ import (
 	"github.com/alielmi98/golang-todo-list-api/api/dto"
 	"github.com/alielmi98/golang-todo-list-api/api/helper"
 	"github.com/alielmi98/golang-todo-list-api/config"
+	"github.com/alielmi98/golang-todo-list-api/constants"
 	"github.com/alielmi98/golang-todo-list-api/services"
 
 	"github.com/gin-gonic/gin"
@@ -13,11 +14,13 @@ import (
 
 type UsersHandler struct {
 	service *services.UserService
+	config  *config.Config
 }
 
 func NewUsersHandler(cfg *config.Config) *UsersHandler {
 	service := services.NewUserService(cfg)
-	return &UsersHandler{service: service}
+	config := cfg
+	return &UsersHandler{service: service, config: config}
 }
 
 // LoginByUsername godoc
@@ -45,8 +48,14 @@ func (h *UsersHandler) LoginByUsername(c *gin.Context) {
 			helper.GenerateBaseResponseWithError(nil, false, helper.InternalError, err))
 		return
 	}
+	// Set the refresh token in a cookie
+	c.SetCookie(constants.RefreshTokenCookieName, token.RefreshToken, int(h.config.JWT.RefreshTokenExpireDuration*60), "/", h.config.Server.Domin, true, true)
 
-	c.JSON(http.StatusCreated, helper.GenerateBaseResponse(token, true, helper.Success))
+	response := new(dto.TokenResponse)
+	response.AccessToken = token.AccessToken
+	response.AccessTokenExpireTime = token.AccessTokenExpireTime
+
+	c.JSON(http.StatusCreated, helper.GenerateBaseResponse(response, true, helper.Success))
 }
 
 // RegisterByUsername godoc

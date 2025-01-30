@@ -10,4 +10,5 @@ const (
 	UsernameKey            string = "Username"
 	EmailKey               string = "Email"
 	ExpireTimeKey          string = "Exp"
+	RefreshTokenCookieName string = "refresh_token"
 )

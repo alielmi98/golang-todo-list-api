@@ -2,6 +2,7 @@ server:
   internalPort: 5005
   externalPort: 5005
   runMode: debug
+  domin: localhost
 cors:
   allowOrigins: "*"
 postgres:
@@ -35,5 +36,5 @@ password:
 jwt:
   secret: "mySecretKey"
   refreshSecret: "mySecretKey"
-  accessTokenExpireDuration: 1440
-  refreshTokenExpireDuration: 60
+  accessTokenExpireDuration: 60
+  refreshTokenExpireDuration: 10080

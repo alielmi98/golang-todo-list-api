@@ -22,6 +22,7 @@ type ServerConfig struct {
 	InternalPort string
 	ExternalPort string
 	RunMode      string
+	Domin        string
 }
 
 type PostgresConfig struct {

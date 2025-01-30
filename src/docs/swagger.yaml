@@ -299,6 +299,29 @@ paths:
       summary: Get ToDos by filter with pagination
       tags:
       - Todo
+  /v1/tokens/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: RefreshToken
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+        "400":
+          description: Failed
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+        "409":
+          description: Failed
+          schema:
+            $ref: '#/definitions/github_com_alielmi98_golang-todo-list-api_api_helper.BaseHttpResponse'
+      summary: RefreshToken
+      tags:
+      - Users
   /v1/users/login-by-username:
     post:
       consumes:

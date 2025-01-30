@@ -11,7 +11,6 @@ import (
 	"github.com/alielmi98/golang-todo-list-api/services"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 )
 
 func Authentication(cfg *config.Config) gin.HandlerFunc {
@@ -27,11 +26,11 @@ func Authentication(cfg *config.Config) gin.HandlerFunc {
 		} else {
 			claimMap, err = tokenService.GetClaims(token[1])
 			if err != nil {
-				switch err.(*jwt.ValidationError).Errors {
-				case jwt.ValidationErrorExpired:
-					err = &service_errors.ServiceError{EndUserMessage: service_errors.TokenExpired}
-				default:
+				serviceErr, ok := err.(*service_errors.ServiceError)
+				if !ok {
 					err = &service_errors.ServiceError{EndUserMessage: service_errors.TokenInvalid}
+				} else {
+					err = serviceErr
 				}
 			}
 		}

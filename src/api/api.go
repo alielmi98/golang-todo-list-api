@@ -31,8 +31,10 @@ func RegisterRoutes(r *gin.Engine, cfg *config.Config) {
 	{
 		//User
 		users := v1.Group("/users")
+		tokens := v1.Group("/tokens")
 		todo := v1.Group("/todo", middlewares.Authentication(cfg))
 		routers.User(users, cfg)
+		routers.Token(tokens, cfg)
 		routers.Todo(todo, cfg)
 
 	}

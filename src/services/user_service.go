@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"log"
 
 	"github.com/alielmi98/golang-todo-list-api/api/dto"
@@ -37,15 +38,20 @@ func (s *UserService) LoginByUsername(req *dto.LoginByUsernameRequest) (*dto.Tok
 	err := s.database.
 		Model(&models.User{}).
 		Where("username = ?", req.Username).
-		Find(&user).Error
+		First(&user).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, &service_errors.ServiceError{EndUserMessage: service_errors.UsernameOrPasswordInvalid}
+		}
 		return nil, err
 	}
+
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
 	if err != nil {
-		return nil, err
+		return nil, &service_errors.ServiceError{EndUserMessage: service_errors.UsernameOrPasswordInvalid}
 	}
-	tdto := tokenDto{UserId: user.Id, Email: user.Email}
+
+	tdto := dto.TokenDto{UserId: user.Id, Email: user.Email}
 
 	token, err := s.tokenService.GenerateToken(&tdto)
 	if err != nil {

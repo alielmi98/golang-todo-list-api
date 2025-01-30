@@ -11,4 +11,5 @@ func User(router *gin.RouterGroup, cfg *config.Config) {
 	h := handlers.NewUsersHandler(cfg)
 	router.POST("/login-by-username", h.LoginByUsername)
 	router.POST("/register-by-username", h.RegisterByUsername)
+
 }

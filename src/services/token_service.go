@@ -7,17 +7,12 @@ import (
 	"github.com/alielmi98/golang-todo-list-api/config"
 	"github.com/alielmi98/golang-todo-list-api/constants"
 	"github.com/alielmi98/golang-todo-list-api/pkg/service_errors"
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
 
 type TokenService struct {
 	cfg *config.Config
-}
-
-type tokenDto struct {
-	UserId   int
-	Username string
-	Email    string
 }
 
 func NewTokenService(cfg *config.Config) *TokenService {
@@ -26,7 +21,7 @@ func NewTokenService(cfg *config.Config) *TokenService {
 	}
 }
 
-func (s *TokenService) GenerateToken(token *tokenDto) (*dto.TokenDetail, error) {
+func (s *TokenService) GenerateToken(token *dto.TokenDto) (*dto.TokenDetail, error) {
 	td := &dto.TokenDetail{}
 	td.AccessTokenExpireTime = time.Now().Add(s.cfg.JWT.AccessTokenExpireDuration * time.Minute).Unix()
 	td.RefreshTokenExpireTime = time.Now().Add(s.cfg.JWT.RefreshTokenExpireDuration * time.Minute).Unix()
@@ -50,6 +45,8 @@ func (s *TokenService) GenerateToken(token *tokenDto) (*dto.TokenDetail, error) 
 	rtc := jwt.MapClaims{}
 
 	rtc[constants.UserIdKey] = token.UserId
+	rtc[constants.UsernameKey] = token.Username
+	rtc[constants.EmailKey] = token.Email
 	rtc[constants.ExpireTimeKey] = td.RefreshTokenExpireTime
 
 	rt := jwt.NewWithClaims(jwt.SigningMethodHS256, rtc)
@@ -74,7 +71,16 @@ func (s *TokenService) VerifyToken(token string) (*jwt.Token, error) {
 	if err != nil {
 		return nil, err
 	}
-	return at, nil
+	// Check if the token is valid and not expired
+	if claims, ok := at.Claims.(jwt.MapClaims); ok && at.Valid {
+		// Check the expiration time
+		if float64(time.Now().Unix()) > claims[constants.ExpireTimeKey].(float64) {
+			return nil, &service_errors.ServiceError{EndUserMessage: service_errors.TokenExpired}
+		}
+		return at, nil
+	}
+
+	return nil, &service_errors.ServiceError{EndUserMessage: service_errors.TokenInvalid}
 }
 
 func (s *TokenService) GetClaims(token string) (claimMap map[string]interface{}, err error) {
@@ -92,4 +98,30 @@ func (s *TokenService) GetClaims(token string) (claimMap map[string]interface{},
 		return claimMap, nil
 	}
 	return nil, &service_errors.ServiceError{EndUserMessage: service_errors.ClaimsNotFound}
+}
+
+func (s *TokenService) RefreshToken(c *gin.Context) (*dto.TokenDetail, error) {
+	refreshToken, err := c.Cookie(constants.RefreshTokenCookieName)
+	if err != nil {
+		return nil, &service_errors.ServiceError{EndUserMessage: service_errors.InvalidRefreshToken}
+	}
+
+	claims, err := s.GetClaims(refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	tokenDto := &dto.TokenDto{
+		UserId:   int(claims[constants.UserIdKey].(float64)),
+		Username: claims[constants.UsernameKey].(string),
+		Email:    claims[constants.EmailKey].(string),
+	}
+	newTokenDetail, err := s.GenerateToken(tokenDto)
+	if err != nil {
+		return nil, err
+	}
+
+	c.SetCookie(constants.RefreshTokenCookieName, newTokenDetail.RefreshToken, int(s.cfg.JWT.RefreshTokenExpireDuration*60), "/", s.cfg.Server.Domin, true, true)
+
+	return newTokenDetail, nil
 }
