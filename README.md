@@ -64,7 +64,7 @@ docker-compose up -d
 ```
 
 5. This will build and start the Docker containers for the application and the database.
-The API will be available at http://localhost:8080.
+The API will be available at http://localhost:5000.
 
 ## Contributing
 
