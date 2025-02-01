@@ -12,6 +12,7 @@ This project is part of the Todo List API project on [roadmap.sh](https://roadma
 - Error handling and security measures
 - rate limiting and throttling for the API
 - Database integration (using Docker)
+- Use of the Gin web framework and Swagger for API documentation
 ## Endpoints
 
 The API provides the following endpoints:
