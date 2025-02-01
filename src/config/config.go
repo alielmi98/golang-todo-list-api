@@ -12,7 +12,6 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
-	Redis    RedisConfig
 	Password PasswordConfig
 	Cors     CorsConfig
 	JWT      JWTConfig
@@ -37,18 +36,6 @@ type PostgresConfig struct {
 	ConnMaxLifetime time.Duration
 }
 
-type RedisConfig struct {
-	Host               string
-	Port               string
-	Password           string
-	Db                 string
-	DialTimeout        time.Duration
-	ReadTimeout        time.Duration
-	WriteTimeout       time.Duration
-	IdleCheckFrequency time.Duration
-	PoolSize           int
-	PoolTimeout        time.Duration
-}
 type PasswordConfig struct {
 	IncludeChars     bool
 	IncludeDigits    bool
@@ -71,6 +58,7 @@ type JWTConfig struct {
 func GetConfig() *Config {
 	cfgPath := getConfigPath(os.Getenv("APP_ENV"))
 	v, err := LoadConfig(cfgPath, "yml")
+
 	if err != nil {
 		log.Fatalf("Error in load config %v", err)
 	}
@@ -120,7 +108,7 @@ func LoadConfig(filename string, fileType string) (*viper.Viper, error) {
 
 func getConfigPath(env string) string {
 	if env == "docker" {
-		return "/app/config/config-docker"
+		return "/config/config-docker"
 	} else {
 		return "../config/config-development"
 	}

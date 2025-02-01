@@ -15,17 +15,6 @@ postgres:
   maxIdleConns: 15
   maxOpenConns: 100
   connMaxLifetime: 5
-redis:
-  host: redis_container
-  port: 6379
-  password: password
-  db: 0
-  dialTimeout: 5
-  readTimeout: 5
-  writeTimeout: 5
-  poolSize: 10
-  poolTimeout: 15
-  idleCheckFrequency: 500
 password:
   includeChars: true
   includeDigits: true

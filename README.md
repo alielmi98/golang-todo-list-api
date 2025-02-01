@@ -63,7 +63,8 @@ cd golang-todo-list-api
 docker-compose up -d
 ```
 
-5. The API will be available at `http://localhost:8080`.
+5. This will build and start the Docker containers for the application and the database.
+The API will be available at http://localhost:8080.
 
 ## Contributing
 

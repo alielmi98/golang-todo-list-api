@@ -96,7 +96,7 @@ func (h *ToDoHandler) DeleteTodo(c *gin.Context) {
 			helper.GenerateBaseResponseWithError(nil, false, helper.InternalError, err))
 		return
 	}
-	c.JSON(http.StatusCreated, helper.GenerateBaseResponse("The ToDo Job Deleted successfully", true, 0))
+	c.JSON(http.StatusNoContent, helper.GenerateBaseResponse("The ToDo Job Deleted successfully", true, 0))
 }
 
 // GetToDoById godoc
